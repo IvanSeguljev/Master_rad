@@ -1,6 +1,7 @@
 package com.ivanseguljev.master_rad;
 
 import androidx.appcompat.app.AppCompatActivity;
+import org.tensorflow.lite.examples.detection.tflite.TFLiteObjectDetectionAPIModel;
 
 import android.os.Bundle;
 
