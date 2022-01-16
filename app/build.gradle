@@ -42,4 +42,6 @@ dependencies {
     implementation 'org.tensorflow:tensorflow-lite-metadata:0.1.0'
     implementation 'org.tensorflow:tensorflow-lite-task-vision:0.3.0'
     implementation 'org.tensorflow:tensorflow-lite-gpu-delegate-plugin:0.3.0'
+    // Implemented lib task api from tensorflow example project
+    implementation project(":lib_task_api")
 }

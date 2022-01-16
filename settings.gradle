@@ -8,3 +8,4 @@ dependencyResolutionManagement {
 }
 rootProject.name = "Master_rad"
 include ':app'
+include ':lib_task_api'
