@@ -10,6 +10,9 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.Master_rad">
         <activity
+            android:name=".EnchancedVision"
+            android:exported="false" />
+        <activity
             android:name=".MainActivity"
             android:exported="true">
             <intent-filter>
