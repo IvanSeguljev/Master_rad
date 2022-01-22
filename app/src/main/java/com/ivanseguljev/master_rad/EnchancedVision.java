@@ -66,7 +66,7 @@ public class EnchancedVision extends AppCompatActivity implements ImageReader.On
     private BorderedText borderedText;
     OverlayView trackingOverlay;
     private Detector apiModel;
-//    private MultiBoxTracker tracker;
+
     private DetectionsMarker detectionsMarker;
     private Bitmap rgbFrameBitmap;
     private Bitmap croppedBitmap;
@@ -92,9 +92,10 @@ public class EnchancedVision extends AppCompatActivity implements ImageReader.On
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_enchanced_vision);
 
-        requestPermission();
         if (hasCameraPermission()) {
             setFragment();
+        } else {
+            requestPermission();
         }
 
         textViewInferenceTime = findViewById(R.id.textViewInferenceTime);
@@ -110,11 +111,11 @@ public class EnchancedVision extends AppCompatActivity implements ImageReader.On
     }
 
     private void requestPermission() {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M && !hasCameraPermission()) {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
             if (shouldShowRequestPermissionRationale(PERMISSION_CAMERA)) {
                 Toast.makeText(
                         EnchancedVision.this,
-                        "Camera permission is required for this demo",
+                        "Neophodan je pristup kameri",
                         Toast.LENGTH_LONG)
                         .show();
             }
@@ -129,7 +130,7 @@ public class EnchancedVision extends AppCompatActivity implements ImageReader.On
             apiModel.setNumThreads(4);
         }catch (Exception e){
             System.out.println(e.getMessage());
-            System.out.println("error ocurred");
+            System.out.println("Greska u pozivanju detektora");
         }
     }
 
