@@ -1,7 +1,5 @@
 package com.ivanseguljev.master_rad;
 
-import static android.media.MediaCodec.MetricsConstants.MODE;
-
 import androidx.appcompat.app.AppCompatActivity;
 
 import org.tensorflow.lite.examples.detection.tflite.Detector;
@@ -33,18 +31,16 @@ import android.os.Trace;
 import android.util.Size;
 import android.util.TypedValue;
 import android.view.Surface;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.ivanseguljev.master_rad.camera.CameraConnectionFragment;
-import com.ivanseguljev.master_rad.camera.LegacyCameraConnectionFragment;
 import com.ivanseguljev.master_rad.customview.OverlayView;
 import com.ivanseguljev.master_rad.detection_handling.DetectionsMarker;
 import com.ivanseguljev.master_rad.env.BorderedText;
 import com.ivanseguljev.master_rad.env.ImageUtils;
 import com.ivanseguljev.master_rad.env.Logger;
-import com.ivanseguljev.master_rad.tracking.MultiBoxTracker;
 
-import java.io.IOException;
 import java.nio.ByteBuffer;
 import java.util.ArrayList;
 import java.util.List;
@@ -54,10 +50,12 @@ public class EnchancedVision extends AppCompatActivity implements ImageReader.On
     private static final String PERMISSION_CAMERA = Manifest.permission.CAMERA;
     private static final int PERMISSIONS_REQUEST = 1;
     private static final Size DESIRED_PREVIEW_SIZE = new Size(640, 480);
-    private static final int SENSOR_ORIENTATION = 90;
     protected int previewWidth = 0;
     protected int previewHeight = 0;
     private Integer sensorOrientation;
+
+    private TextView textViewInferenceTime;
+    private TextView textViewPreviewSize;
 
     private final int inputImageSize = 320;
     private final float MINIMUM_CONFIDENCE_OD = 0.5f;
@@ -98,6 +96,9 @@ public class EnchancedVision extends AppCompatActivity implements ImageReader.On
         if (hasCameraPermission()) {
             setFragment();
         }
+
+        textViewInferenceTime = findViewById(R.id.textViewInferenceTime);
+        textViewPreviewSize = findViewById(R.id.textViewPreviewSize);
     }
 
     private boolean hasCameraPermission() {
@@ -125,6 +126,7 @@ public class EnchancedVision extends AppCompatActivity implements ImageReader.On
     {
         try {
             apiModel = TFLiteObjectDetectionAPIModel.create(this, modelFilename, labelsFilename, inputImageSize, isQuantized);
+            apiModel.setNumThreads(4);
         }catch (Exception e){
             System.out.println(e.getMessage());
             System.out.println("error ocurred");
@@ -363,9 +365,8 @@ public class EnchancedVision extends AppCompatActivity implements ImageReader.On
                                 new Runnable() {
                                     @Override
                                     public void run() {
-//                                        showFrameInfo(previewWidth + "x" + previewHeight);
-//                                        showCropInfo(cropCopyBitmap.getWidth() + "x" + cropCopyBitmap.getHeight());
-//                                        showInference(lastProcessingTimeMs + "ms");
+                                        textViewInferenceTime.setText(lastProcessingTimeMs + " milisekundi");
+                                        textViewPreviewSize.setText(previewWidth + "x" + previewHeight);
                                     }
                                 });
                     }
