@@ -3,4 +3,11 @@
     <string name="tfe_od_camera_error">Uredjaj ne podrzava Camera2 API</string>
     <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>
+    
+    <!-- Detection class names to display names -->
+    <string name="detection_warning_ahead">Upozorenje</string>
+    <string name="detection_mandatory">Ogranicenje</string>
+    <string name="detection_no_stopping_or_parking">Zabranjeno parkiranje</string>
+    <string name="detection_stop">Stop</string>
+    <string name="detection_give_road">Pravo prvenstva</string>
 </resources>

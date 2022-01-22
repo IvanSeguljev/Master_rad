@@ -38,6 +38,7 @@ import android.widget.Toast;
 import com.ivanseguljev.master_rad.camera.CameraConnectionFragment;
 import com.ivanseguljev.master_rad.camera.LegacyCameraConnectionFragment;
 import com.ivanseguljev.master_rad.customview.OverlayView;
+import com.ivanseguljev.master_rad.detection_handling.DetectionsMarker;
 import com.ivanseguljev.master_rad.env.BorderedText;
 import com.ivanseguljev.master_rad.env.ImageUtils;
 import com.ivanseguljev.master_rad.env.Logger;
@@ -67,7 +68,8 @@ public class EnchancedVision extends AppCompatActivity implements ImageReader.On
     private BorderedText borderedText;
     OverlayView trackingOverlay;
     private Detector apiModel;
-    private MultiBoxTracker tracker;
+//    private MultiBoxTracker tracker;
+    private DetectionsMarker detectionsMarker;
     private Bitmap rgbFrameBitmap;
     private Bitmap croppedBitmap;
     private Bitmap cropCopyBitmap = null;
@@ -188,14 +190,18 @@ public class EnchancedVision extends AppCompatActivity implements ImageReader.On
         borderedText = new BorderedText(textSizePx);
         borderedText.setTypeface(Typeface.MONOSPACE);
 
-        tracker = new MultiBoxTracker(this);
 
+        //initializing object detector
         initDetector();
 
         previewWidth = size.getWidth();
         previewHeight = size.getHeight();
-        System.out.println("size: w-"+previewWidth+", h-"+previewHeight);
         sensorOrientation = rotation - getScreenOrientation();
+
+        //initializing detection marker
+//        tracker = new MultiBoxTracker(this);
+        detectionsMarker = new DetectionsMarker(this,previewWidth,previewHeight,sensorOrientation);
+
         LOGGER.i("Initializing at size %dx%d", previewWidth, previewHeight);
         rgbFrameBitmap = Bitmap.createBitmap(previewWidth, previewHeight, Bitmap.Config.ARGB_8888);
         croppedBitmap = Bitmap.createBitmap(inputImageSize, inputImageSize, Bitmap.Config.ARGB_8888);
@@ -214,11 +220,11 @@ public class EnchancedVision extends AppCompatActivity implements ImageReader.On
                 new OverlayView.DrawCallback() {
                     @Override
                     public void drawCallback(final Canvas canvas) {
-                        tracker.draw(canvas);
+                        detectionsMarker.draw(canvas);
                     }
                 });
 
-        tracker.setFrameConfiguration(previewWidth, previewHeight, sensorOrientation);
+
     }
 
     protected void fillBytes(final Image.Plane[] planes, final byte[][] yuvBytes) {
@@ -348,7 +354,7 @@ public class EnchancedVision extends AppCompatActivity implements ImageReader.On
                             }
                         }
 
-                        tracker.trackResults(mappedRecognitions, currTimestamp);
+                        detectionsMarker.trackResults(mappedRecognitions, currTimestamp);
                         trackingOverlay.postInvalidate();
 
                         computingDetection = false;
