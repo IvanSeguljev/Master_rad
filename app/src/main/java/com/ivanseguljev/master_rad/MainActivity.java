@@ -1,46 +1,30 @@
 package com.ivanseguljev.master_rad;
 
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.appcompat.app.AppCompatDelegate;
 
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.ImageButton;
-import android.widget.ImageSwitcher;
-import android.widget.ImageView;
 import android.widget.Toast;
+
+import com.ivanseguljev.master_rad.env.LayoutController;
 
 public class MainActivity extends AppCompatActivity {
     ImageButton buttonEnchancedVision;
     ImageButton buttonSignDetection;
-    ImageView imageViewHamburger;
+    LayoutController layoutController;
+
     private boolean isHamburgerOpen = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES);
         setContentView(R.layout.activity_main);
+        layoutController = new LayoutController().init(this);
 
         buttonEnchancedVision = findViewById(R.id.btn_enchanced_vision);
         buttonSignDetection = findViewById(R.id.btn_sign_detection);
-        imageViewHamburger = findViewById(R.id.imageViewHamburger);
-
-        imageViewHamburger.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                if(!isHamburgerOpen){
-                    imageViewHamburger.setImageResource(R.drawable.close_hamburger);
-                    isHamburgerOpen=true;
-                }
-                else{
-                    imageViewHamburger.setImageResource(R.drawable.hamburger);
-                    isHamburgerOpen=false;
-                }
-            }
-        });
-
 
         //sign detection should lead to view that shows cutouts of detected signs
         buttonSignDetection.setOnClickListener(new View.OnClickListener() {
