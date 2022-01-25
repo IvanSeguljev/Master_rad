@@ -30,7 +30,8 @@ public class MainActivity extends AppCompatActivity {
         buttonSignDetection.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Toast.makeText(getApplicationContext(),"to be implemented",Toast.LENGTH_SHORT).show();
+                Intent roadsignDetectionIntent = new Intent(MainActivity.this, RoadsignDetection.class);
+                MainActivity.this.startActivity(roadsignDetectionIntent);
             }
         });
 

@@ -12,6 +12,9 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.Master_rad">
         <activity
+            android:name=".RoadsignDetection"
+            android:exported="false" />
+        <activity
             android:name=".LayoutActivity"
             android:exported="false" />
         <activity
