@@ -10,4 +10,14 @@
     <string name="detection_no_stopping_or_parking">Zabranjeno parkiranje</string>
     <string name="detection_stop">Stop</string>
     <string name="detection_give_road">Pravo prvenstva</string>
+
+    <!-- navigation -->
+    <string name="nav_home_page">Početna strana</string>
+    <string name="nav_sign_detection">Detekcija saobraćajnih znakova</string>
+    <string name="nav_enchanced_vision">Kompjuterski vid</string>
+    <string name="nav_about_app">O aplikaciji</string>
+
+    <!-- detection params -->
+    <string name="detpar_preview_size">Veličina prikaza:</string>
+    <string name="detpar_inference_time">Vreme detekcije:</string>
 </resources>
