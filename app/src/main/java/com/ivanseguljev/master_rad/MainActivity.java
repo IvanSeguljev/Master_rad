@@ -1,7 +1,6 @@
 package com.ivanseguljev.master_rad;
 
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.appcompat.app.AppCompatDelegate;
 
 import android.content.Intent;
 import android.os.Bundle;
@@ -9,15 +8,20 @@ import android.view.View;
 import android.widget.ImageButton;
 import android.widget.Toast;
 
+import com.ivanseguljev.master_rad.env.LayoutController;
+
 public class MainActivity extends AppCompatActivity {
     ImageButton buttonEnchancedVision;
     ImageButton buttonSignDetection;
+    LayoutController layoutController;
+
+    private boolean isHamburgerOpen = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES);
         setContentView(R.layout.activity_main);
+        layoutController = new LayoutController().init(this);
 
         buttonEnchancedVision = findViewById(R.id.btn_enchanced_vision);
         buttonSignDetection = findViewById(R.id.btn_sign_detection);

@@ -3,6 +3,7 @@
     package="com.ivanseguljev.master_rad">
 
     <uses-permission android:name="android.permission.CAMERA" />
+
     <application
         android:allowBackup="true"
         android:icon="@mipmap/ic_launcher"
@@ -10,6 +11,9 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/Theme.Master_rad">
+        <activity
+            android:name=".LayoutActivity"
+            android:exported="false" />
         <activity
             android:name=".EnchancedVision"
             android:exported="false" />

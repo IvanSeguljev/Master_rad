@@ -13,7 +13,6 @@ import android.util.TypedValue;
 import com.ivanseguljev.master_rad.env.ImageUtils;
 import com.ivanseguljev.master_rad.env.BorderedText;
 import com.ivanseguljev.master_rad.env.Logger;
-import com.ivanseguljev.master_rad.tracking.MultiBoxTracker;
 
 import org.tensorflow.lite.examples.detection.tflite.Detector;
 

@@ -39,6 +39,7 @@ import com.ivanseguljev.master_rad.customview.OverlayView;
 import com.ivanseguljev.master_rad.detection_handling.DetectionsMarker;
 import com.ivanseguljev.master_rad.env.BorderedText;
 import com.ivanseguljev.master_rad.env.ImageUtils;
+import com.ivanseguljev.master_rad.env.LayoutController;
 import com.ivanseguljev.master_rad.env.Logger;
 
 import java.nio.ByteBuffer;
@@ -56,6 +57,8 @@ public class EnchancedVision extends AppCompatActivity implements ImageReader.On
 
     private TextView textViewInferenceTime;
     private TextView textViewPreviewSize;
+
+    LayoutController layoutController;
 
     private final int inputImageSize = 320;
     private final float MINIMUM_CONFIDENCE_OD = 0.5f;
@@ -91,6 +94,7 @@ public class EnchancedVision extends AppCompatActivity implements ImageReader.On
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_enchanced_vision);
+        layoutController = new LayoutController().init(this);
 
         if (hasCameraPermission()) {
             setFragment();
