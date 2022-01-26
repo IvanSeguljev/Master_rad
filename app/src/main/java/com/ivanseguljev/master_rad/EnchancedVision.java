@@ -36,7 +36,7 @@ import android.widget.Toast;
 
 import com.ivanseguljev.master_rad.camera.CameraConnectionFragment;
 import com.ivanseguljev.master_rad.customview.OverlayView;
-import com.ivanseguljev.master_rad.detection_handling.DetectionsMarker;
+import com.ivanseguljev.master_rad.detection_handling.EnchancedVisionDetectionHandler;
 import com.ivanseguljev.master_rad.env.BorderedText;
 import com.ivanseguljev.master_rad.env.ImageUtils;
 import com.ivanseguljev.master_rad.env.LayoutController;
@@ -70,7 +70,7 @@ public class EnchancedVision extends AppCompatActivity implements ImageReader.On
     OverlayView trackingOverlay;
     private Detector apiModel;
 
-    private DetectionsMarker detectionsMarker;
+    private EnchancedVisionDetectionHandler enchancedVisionDetectionHandler;
     private Bitmap rgbFrameBitmap;
     private Bitmap croppedBitmap;
     private Bitmap cropCopyBitmap = null;
@@ -207,7 +207,7 @@ public class EnchancedVision extends AppCompatActivity implements ImageReader.On
 
         //initializing detection marker
 //        tracker = new MultiBoxTracker(this);
-        detectionsMarker = new DetectionsMarker(this,previewWidth,previewHeight,sensorOrientation);
+        enchancedVisionDetectionHandler = new EnchancedVisionDetectionHandler(this,previewWidth,previewHeight,sensorOrientation);
 
         LOGGER.i("Initializing at size %dx%d", previewWidth, previewHeight);
         rgbFrameBitmap = Bitmap.createBitmap(previewWidth, previewHeight, Bitmap.Config.ARGB_8888);
@@ -227,7 +227,7 @@ public class EnchancedVision extends AppCompatActivity implements ImageReader.On
                 new OverlayView.DrawCallback() {
                     @Override
                     public void drawCallback(final Canvas canvas) {
-                        detectionsMarker.draw(canvas);
+                        enchancedVisionDetectionHandler.draw(canvas);
                     }
                 });
 
@@ -361,7 +361,7 @@ public class EnchancedVision extends AppCompatActivity implements ImageReader.On
                             }
                         }
 
-                        detectionsMarker.trackResults(mappedRecognitions, currTimestamp);
+                        enchancedVisionDetectionHandler.trackResults(mappedRecognitions, currTimestamp);
                         trackingOverlay.postInvalidate();
 
                         computingDetection = false;
