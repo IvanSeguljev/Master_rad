@@ -33,6 +33,8 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.ivanseguljev.master_rad.camera.CameraConnectionFragment;
+import com.ivanseguljev.master_rad.detection_handling.DetectionInstance;
+import com.ivanseguljev.master_rad.detection_handling.DetectionsToDisplay;
 import com.ivanseguljev.master_rad.detection_handling.EnchancedVisionDetectionHandler;
 import com.ivanseguljev.master_rad.detection_handling.RoadsignDetectionHandler;
 import com.ivanseguljev.master_rad.env.BorderedText;
@@ -356,11 +358,8 @@ public class RoadsignDetection extends AppCompatActivity implements ImageReader.
                                 new Runnable() {
                                     @Override
                                     public void run() {
-                                        Bitmap lastDetection = roadsignDetectionHandler.getLastDetectionBitmap();
-                                        if (lastDetection != null) {
-                                            imageViewLastDetected.setImageBitmap(lastDetection);
-                                            imageViewLastDetected.postInvalidate();
-                                        }
+                                        show_detections_on_UI(roadsignDetectionHandler.getDetectionsToDisplay());
+
                                         roadsignDetectionHandler.clearResultsMap();
 //                                        textViewInferenceTime.setText(lastProcessingTimeMs + " milisekundi");
 //                                        textViewPreviewSize.setText(previewWidth + "x" + previewHeight);
@@ -369,7 +368,17 @@ public class RoadsignDetection extends AppCompatActivity implements ImageReader.
                     }
                 });
     }
-
+    private void show_detections_on_UI(DetectionsToDisplay detectionsToDisplay){
+        //show last detected item
+        if (detectionsToDisplay.lastDetection != null) {
+            imageViewLastDetected.setImageBitmap(detectionsToDisplay.lastDetection);
+            imageViewLastDetected.postInvalidate();
+        }
+        //update detection feed
+        if(detectionsToDisplay.detectionFeed.size()>0){
+            System.out.println("writing to detection feed");
+        }
+    }
     protected void readyForNextImage() {
         if (postInferenceCallback != null) {
             postInferenceCallback.run();

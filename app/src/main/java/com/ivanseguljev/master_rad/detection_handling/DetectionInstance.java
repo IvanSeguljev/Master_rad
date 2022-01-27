@@ -11,12 +11,13 @@ public class DetectionInstance {
     public float detectionConfidence;
     private String title;
     private long timestamp;
-    public final static String[] DETECTION_LABELS = new String[]{"warning_ahead","mandatory","no_stopping_or_parking","stop","give_road"};
+    public final static String[] DETECTION_LABELS = new String[]{"warning_ahead","mandatory","no_stopping_or_parking","stop","give_road","warning_on_spot"};
 
     public DetectionInstance(RectF location, float detectionConfidence, String title){
         this.title = title;
         this.detectionConfidence = detectionConfidence;
         this.location = location;
+        setTimestamp();
     }
 
 
@@ -39,6 +40,9 @@ public class DetectionInstance {
                 break;
             case "give_road":
                 displayText = context.getResources().getString(R.string.detection_give_road);
+                break;
+            case "warning_on_spot":
+                displayText = context.getResources().getString(R.string.detection_warning_on_spot);
                 break;
         }
         return displayText;
@@ -63,6 +67,9 @@ public class DetectionInstance {
                 break;
             case "give_road":
                 color = Color.GRAY;
+                break;
+            case "warning_on_spot":
+                color = Color.BLUE;
                 break;
         }
         return color;
@@ -97,5 +104,8 @@ public class DetectionInstance {
 
     public void setTimestamp(long timestamp) {
         this.timestamp = timestamp;
+    }
+    public void setTimestamp() {
+        this.timestamp = System.currentTimeMillis();
     }
 }
