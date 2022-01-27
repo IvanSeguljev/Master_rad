@@ -88,7 +88,6 @@ public class RoadsignDetectionHandler {
             int y = Math.max(0, (int) lastDetection.getLocation().top);
             int wcorr = Math.max(0,(int)(x+lastDetection.getLocation().width()-this.frame.getWidth()));
             int hcorr = Math.max(0,(int)(y+lastDetection.getLocation().height()-this.frame.getHeight()));
-            System.out.println("rgbw: " + this.frame.getWidth() +" rgbh: " +this.frame.getHeight()+"x: " + (int) lastDetection.getLocation().left + " y: " + (int) lastDetection.getLocation().left + " w: " + (int) (lastDetection.getLocation().width() - 1) + " h: " + (int) (lastDetection.getLocation().height() - 1));
             return Bitmap.createBitmap(
                     frame,
                     x,
