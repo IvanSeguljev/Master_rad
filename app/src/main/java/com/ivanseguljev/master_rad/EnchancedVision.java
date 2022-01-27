@@ -50,7 +50,7 @@ public class EnchancedVision extends AppCompatActivity implements ImageReader.On
     private static final Logger LOGGER = new Logger();
     private static final String PERMISSION_CAMERA = Manifest.permission.CAMERA;
     private static final int PERMISSIONS_REQUEST = 1;
-    private static final Size DESIRED_PREVIEW_SIZE = new Size(640, 480);
+    private static final Size DESIRED_PREVIEW_SIZE = new Size(1280, 960);
     protected int previewWidth = 0;
     protected int previewHeight = 0;
     private Integer sensorOrientation;
