@@ -28,14 +28,19 @@ import android.os.Trace;
 import android.util.Size;
 import android.util.TypedValue;
 import android.view.Surface;
+import android.view.View;
+import android.view.animation.AccelerateInterpolator;
+import android.view.animation.AlphaAnimation;
+import android.view.animation.Animation;
+import android.view.animation.AnimationSet;
+import android.view.animation.AnimationUtils;
+import android.view.animation.DecelerateInterpolator;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import com.ivanseguljev.master_rad.camera.CameraConnectionFragment;
-import com.ivanseguljev.master_rad.detection_handling.DetectionInstance;
 import com.ivanseguljev.master_rad.detection_handling.DetectionsToDisplay;
-import com.ivanseguljev.master_rad.detection_handling.EnchancedVisionDetectionHandler;
 import com.ivanseguljev.master_rad.detection_handling.RoadsignDetectionHandler;
 import com.ivanseguljev.master_rad.env.BorderedText;
 import com.ivanseguljev.master_rad.env.ImageUtils;
@@ -61,6 +66,7 @@ public class RoadsignDetection extends AppCompatActivity implements ImageReader.
 
     private TextView textViewInferenceTime;
     private TextView textViewPreviewSize;
+    private View flashNotif;
 
     private final int inputImageSize = 320;
     private final float MINIMUM_CONFIDENCE_OD = 0.5f;
@@ -91,13 +97,27 @@ public class RoadsignDetection extends AppCompatActivity implements ImageReader.
     private Handler handler;
     private HandlerThread handlerThread;
     private ImageView imageViewLastDetected;
+    AnimationSet flash;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_roadsign_detection);
         layoutController = new LayoutController().init(this);
+        flashNotif = RoadsignDetection.this.findViewById(R.id.flash_notif);
         imageViewLastDetected = RoadsignDetection.this.findViewById(R.id.imageview_last_detected);
+        //Flash animation
+        Animation fadeIn = new AlphaAnimation(0, 1);
+        fadeIn.setInterpolator(new DecelerateInterpolator());
+        fadeIn.setDuration(200);
+        Animation fadeOut = new AlphaAnimation(1, 0);
+        fadeOut.setInterpolator(new AccelerateInterpolator());
+        fadeOut.setStartOffset(200);
+        fadeOut.setDuration(1000);
+
+        flash = new AnimationSet(false);
+        flash.addAnimation(fadeIn);
+        flash.addAnimation(fadeOut);
         if (hasCameraPermission()) {
             setFragment();
         } else {
@@ -375,8 +395,20 @@ public class RoadsignDetection extends AppCompatActivity implements ImageReader.
             imageViewLastDetected.postInvalidate();
         }
         //update detection feed
-        if(detectionsToDisplay.detectionFeed.size()>0){
-            System.out.println("writing to detection feed");
+        if(detectionsToDisplay.isDetectedStop){
+            System.out.println("Stop");
+            flashNotif.setBackgroundColor(Color.RED);
+            flashNotif.startAnimation(flash);
+        }
+        if(detectionsToDisplay.isDetectedWarningOnSpot){
+            System.out.println("warning on spot");
+            flashNotif.setBackgroundColor(Color.BLUE);
+            flashNotif.startAnimation(flash);
+        }
+        if(detectionsToDisplay.isDetectedNoParking){
+            System.out.println("Stop");
+            flashNotif.setBackgroundColor(Color.MAGENTA);
+            flashNotif.startAnimation(flash);
         }
     }
     protected void readyForNextImage() {

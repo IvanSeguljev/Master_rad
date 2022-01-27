@@ -21,8 +21,8 @@ public class RoadsignDetectionHandler {
     private Bitmap frame = null;
     private List<Detector.Recognition> detections;
     private final Logger logger = new Logger();
-    private Map<String, DetectionInstance> detectionsToDisplay;
-    private Map<String,Long> lastDetectionTimes;
+    private  Map<String, DetectionInstance> detectionsToDisplay;
+    private  Map<String,Long> lastDetectionTimes;
     private int timeoutPeriodMs = 2000;
     private int previewWidth;
     private int previewHeight;
@@ -79,7 +79,7 @@ public class RoadsignDetectionHandler {
         return res;
     }
 
-    public synchronized void clearResultsMap() {
+    public void clearResultsMap() {
         detectionsToDisplay.replaceAll((k, v) -> null);
     }
 
