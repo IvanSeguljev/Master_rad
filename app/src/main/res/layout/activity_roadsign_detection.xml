@@ -128,9 +128,10 @@
             android:layout_height="64dp"
             android:layout_marginStart="16dp"
             android:layout_marginTop="12dp"
+            android:alpha="0.2"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/imageview_last_detected"
-            app:srcCompat="@android:drawable/btn_star_big_off" />
+            app:srcCompat="@drawable/stop_darken" />
 
         <ImageView
             android:id="@+id/imageview_warning_on_spot_detected"
@@ -138,9 +139,10 @@
             android:layout_height="64dp"
             android:layout_marginStart="8dp"
             android:layout_marginTop="12dp"
+            android:alpha="0.2"
             app:layout_constraintStart_toEndOf="@+id/imageview_stop_detected"
             app:layout_constraintTop_toBottomOf="@+id/imageview_last_detected"
-            app:srcCompat="@android:drawable/btn_star_big_off" />
+            app:srcCompat="@drawable/pesacki_darken" />
 
         <ImageView
             android:id="@+id/imageview_no_parking_detected"
@@ -148,9 +150,10 @@
             android:layout_height="64dp"
             android:layout_marginStart="12dp"
             android:layout_marginTop="12dp"
+            android:alpha="0.2"
             app:layout_constraintStart_toEndOf="@+id/imageview_warning_on_spot_detected"
             app:layout_constraintTop_toBottomOf="@+id/imageview_last_detected"
-            app:srcCompat="@android:drawable/btn_star_big_off" />
+            app:srcCompat="@drawable/no_parking_darken" />
     </androidx.constraintlayout.widget.ConstraintLayout>
 
     <View

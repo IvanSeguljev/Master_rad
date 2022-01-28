@@ -7,6 +7,8 @@ import android.view.animation.Animation;
 import android.view.animation.AnimationSet;
 import android.widget.ImageView;
 
+import com.ivanseguljev.master_rad.R;
+
 
 public class FlashNotifUtil {
     //stopSignParams
@@ -31,7 +33,9 @@ public class FlashNotifUtil {
     public void updateStop(boolean isDetected, ImageView imageViewStop){
         if(isDetected){
             if(!isStopShowing) {
-                imageViewStop.setBackgroundColor(Color.RED);
+                imageViewStop.setBackgroundColor(Color.YELLOW);
+                imageViewStop.setImageResource(R.drawable.stop_normal);
+                imageViewStop.setAlpha(1f);
                 System.out.println("Stop");
                 playFulscreenFlash(Color.RED);
             }
@@ -41,6 +45,8 @@ public class FlashNotifUtil {
             if(isStopShowing){
                 if(stopTimeout<System.currentTimeMillis()) {
                     imageViewStop.setBackgroundColor(Color.TRANSPARENT);
+                    imageViewStop.setAlpha(0.2f);
+                    imageViewStop.setImageResource(R.drawable.stop_darken);
                     isStopShowing = false;
                 }
             }
@@ -49,7 +55,9 @@ public class FlashNotifUtil {
     public void updateWarningOnSpot(boolean isDetected, ImageView imageViewWarningOnSpot){
         if(isDetected){
             if(!isWarningOnSpotShowing) {
-                imageViewWarningOnSpot.setBackgroundColor(Color.BLUE);
+                imageViewWarningOnSpot.setBackgroundColor(Color.YELLOW);
+                imageViewWarningOnSpot.setImageResource(R.drawable.pesacki_normal);
+                imageViewWarningOnSpot.setAlpha(1f);
                 System.out.println("Stop");
                 playFulscreenFlash(Color.BLUE);
             }
@@ -59,6 +67,8 @@ public class FlashNotifUtil {
             if(isWarningOnSpotShowing){
                 if(warningOnSpotTimeout<System.currentTimeMillis()) {
                     imageViewWarningOnSpot.setBackgroundColor(Color.TRANSPARENT);
+                    imageViewWarningOnSpot.setImageResource(R.drawable.pesacki_darken);
+                    imageViewWarningOnSpot.setAlpha(0.2f);
                     isWarningOnSpotShowing = false;
                 }
             }
@@ -66,7 +76,9 @@ public class FlashNotifUtil {
     }public void updateNoParking(boolean isDetected, ImageView imageViewNoParking){
         if(isDetected){
             if(!isNoParkingShowing) {
-                imageViewNoParking.setBackgroundColor(Color.MAGENTA);
+                imageViewNoParking.setBackgroundColor(Color.YELLOW);
+                imageViewNoParking.setImageResource(R.drawable.no_parking_normal);
+                imageViewNoParking.setAlpha(1f);
                 System.out.println("Stop");
                 playFulscreenFlash(Color.MAGENTA);
             }
@@ -76,6 +88,8 @@ public class FlashNotifUtil {
             if(isNoParkingShowing){
                 if(noParkingTimeout<System.currentTimeMillis()) {
                     imageViewNoParking.setBackgroundColor(Color.TRANSPARENT);
+                    imageViewNoParking.setImageResource(R.drawable.no_parking_darken);
+                    imageViewNoParking.setAlpha(0.2f);
                     isNoParkingShowing = false;
                 }
             }
