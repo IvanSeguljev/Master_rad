@@ -31,6 +31,7 @@ import android.util.Size;
 import android.util.TypedValue;
 import android.view.Surface;
 import android.view.View;
+import android.view.WindowManager;
 import android.view.animation.AccelerateInterpolator;
 import android.view.animation.AlphaAnimation;
 import android.view.animation.Animation;
@@ -109,6 +110,7 @@ public class RoadsignDetection extends AppCompatActivity implements ImageReader.
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_roadsign_detection);
         layoutController = new LayoutController().init(this);
+        getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
         //Getting UI components
         flashNotif = RoadsignDetection.this.findViewById(R.id.flash_notif);
         imageViewLastDetected = RoadsignDetection.this.findViewById(R.id.imageview_last_detected);

@@ -31,6 +31,7 @@ import android.os.Trace;
 import android.util.Size;
 import android.util.TypedValue;
 import android.view.Surface;
+import android.view.WindowManager;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -94,6 +95,7 @@ public class EnchancedVision extends AppCompatActivity implements ImageReader.On
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_enchanced_vision);
+        getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
         layoutController = new LayoutController().init(this);
 
         if (hasCameraPermission()) {
