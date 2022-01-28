@@ -21,8 +21,10 @@ import android.media.Image;
 import android.media.ImageReader;
 import android.os.Build;
 import android.os.Bundle;
+import android.os.CountDownTimer;
 import android.os.Handler;
 import android.os.HandlerThread;
+import android.os.Looper;
 import android.os.SystemClock;
 import android.os.Trace;
 import android.util.Size;
@@ -46,6 +48,7 @@ import com.ivanseguljev.master_rad.env.BorderedText;
 import com.ivanseguljev.master_rad.env.ImageUtils;
 import com.ivanseguljev.master_rad.env.LayoutController;
 import com.ivanseguljev.master_rad.env.Logger;
+import com.ivanseguljev.master_rad.util.FlashNotifUtil;
 
 import org.tensorflow.lite.examples.detection.tflite.Detector;
 import org.tensorflow.lite.examples.detection.tflite.TFLiteObjectDetectionAPIModel;
@@ -67,6 +70,9 @@ public class RoadsignDetection extends AppCompatActivity implements ImageReader.
     private TextView textViewInferenceTime;
     private TextView textViewPreviewSize;
     private View flashNotif;
+    private ImageView imageViewStopDetected;
+    private ImageView imageViewWarningOnSpotDetected;
+    private ImageView imageViewNoParkingDetected;
 
     private final int inputImageSize = 320;
     private final float MINIMUM_CONFIDENCE_OD = 0.5f;
@@ -97,15 +103,19 @@ public class RoadsignDetection extends AppCompatActivity implements ImageReader.
     private Handler handler;
     private HandlerThread handlerThread;
     private ImageView imageViewLastDetected;
-    AnimationSet flash;
-
+    private FlashNotifUtil flashNotifUtil;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_roadsign_detection);
         layoutController = new LayoutController().init(this);
+        //Getting UI components
         flashNotif = RoadsignDetection.this.findViewById(R.id.flash_notif);
         imageViewLastDetected = RoadsignDetection.this.findViewById(R.id.imageview_last_detected);
+        textViewInferenceTime = RoadsignDetection.this.findViewById(R.id.textViewInferenceTime);
+        imageViewStopDetected = RoadsignDetection.this.findViewById(R.id.imageview_stop_detected);
+        imageViewWarningOnSpotDetected = RoadsignDetection.this.findViewById(R.id.imageview_warning_on_spot_detected);
+        imageViewNoParkingDetected = RoadsignDetection.this.findViewById(R.id.imageview_no_parking_detected);
         //Flash animation
         Animation fadeIn = new AlphaAnimation(0, 1);
         fadeIn.setInterpolator(new DecelerateInterpolator());
@@ -114,10 +124,11 @@ public class RoadsignDetection extends AppCompatActivity implements ImageReader.
         fadeOut.setInterpolator(new AccelerateInterpolator());
         fadeOut.setStartOffset(200);
         fadeOut.setDuration(1000);
+        AnimationSet flashAnim = new AnimationSet(false);
+        flashAnim.addAnimation(fadeIn);
+        flashAnim.addAnimation(fadeOut);
 
-        flash = new AnimationSet(false);
-        flash.addAnimation(fadeIn);
-        flash.addAnimation(fadeOut);
+        flashNotifUtil = new FlashNotifUtil(this,flashNotif,flashAnim);
         if (hasCameraPermission()) {
             setFragment();
         } else {
@@ -379,9 +390,8 @@ public class RoadsignDetection extends AppCompatActivity implements ImageReader.
                                     @Override
                                     public void run() {
                                         show_detections_on_UI(roadsignDetectionHandler.getDetectionsToDisplay());
-
                                         roadsignDetectionHandler.clearResultsMap();
-//                                        textViewInferenceTime.setText(lastProcessingTimeMs + " milisekundi");
+                                        textViewInferenceTime.setText(lastProcessingTimeMs + " milisekundi");
 //                                        textViewPreviewSize.setText(previewWidth + "x" + previewHeight);
                                     }
                                 });
@@ -395,21 +405,10 @@ public class RoadsignDetection extends AppCompatActivity implements ImageReader.
             imageViewLastDetected.postInvalidate();
         }
         //update detection feed
-        if(detectionsToDisplay.isDetectedStop){
-            System.out.println("Stop");
-            flashNotif.setBackgroundColor(Color.RED);
-            flashNotif.startAnimation(flash);
-        }
-        if(detectionsToDisplay.isDetectedWarningOnSpot){
-            System.out.println("warning on spot");
-            flashNotif.setBackgroundColor(Color.BLUE);
-            flashNotif.startAnimation(flash);
-        }
-        if(detectionsToDisplay.isDetectedNoParking){
-            System.out.println("Stop");
-            flashNotif.setBackgroundColor(Color.MAGENTA);
-            flashNotif.startAnimation(flash);
-        }
+        flashNotifUtil.updateStop(detectionsToDisplay.isDetectedStop,imageViewStopDetected);
+        flashNotifUtil.updateWarningOnSpot(detectionsToDisplay.isDetectedWarningOnSpot,imageViewWarningOnSpotDetected);
+        flashNotifUtil.updateNoParking(detectionsToDisplay.isDetectedNoParking,imageViewNoParkingDetected);
+
     }
     protected void readyForNextImage() {
         if (postInferenceCallback != null) {
