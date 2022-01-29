@@ -1,6 +1,9 @@
 package com.ivanseguljev.master_rad;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.recyclerview.widget.DefaultItemAnimator;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
 import android.Manifest;
 import android.app.Fragment;
@@ -21,10 +24,8 @@ import android.media.Image;
 import android.media.ImageReader;
 import android.os.Build;
 import android.os.Bundle;
-import android.os.CountDownTimer;
 import android.os.Handler;
 import android.os.HandlerThread;
-import android.os.Looper;
 import android.os.SystemClock;
 import android.os.Trace;
 import android.util.Size;
@@ -36,7 +37,6 @@ import android.view.animation.AccelerateInterpolator;
 import android.view.animation.AlphaAnimation;
 import android.view.animation.Animation;
 import android.view.animation.AnimationSet;
-import android.view.animation.AnimationUtils;
 import android.view.animation.DecelerateInterpolator;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -49,6 +49,7 @@ import com.ivanseguljev.master_rad.env.BorderedText;
 import com.ivanseguljev.master_rad.env.ImageUtils;
 import com.ivanseguljev.master_rad.env.LayoutController;
 import com.ivanseguljev.master_rad.env.Logger;
+import com.ivanseguljev.master_rad.util.DetectionFeedAdapter;
 import com.ivanseguljev.master_rad.util.FlashNotifUtil;
 
 import org.tensorflow.lite.examples.detection.tflite.Detector;
@@ -105,6 +106,8 @@ public class RoadsignDetection extends AppCompatActivity implements ImageReader.
     private HandlerThread handlerThread;
     private ImageView imageViewLastDetected;
     private FlashNotifUtil flashNotifUtil;
+    private RecyclerView recyclerViewDetectionFeed;
+    private DetectionFeedAdapter detectionFeedAdapter;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -112,12 +115,19 @@ public class RoadsignDetection extends AppCompatActivity implements ImageReader.
         layoutController = new LayoutController().init(this);
         getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
         //Getting UI components
-        flashNotif = RoadsignDetection.this.findViewById(R.id.flash_notif);
-        imageViewLastDetected = RoadsignDetection.this.findViewById(R.id.imageview_last_detected);
-        textViewInferenceTime = RoadsignDetection.this.findViewById(R.id.textViewInferenceTime);
-        imageViewStopDetected = RoadsignDetection.this.findViewById(R.id.imageview_stop_detected);
-        imageViewWarningOnSpotDetected = RoadsignDetection.this.findViewById(R.id.imageview_warning_on_spot_detected);
-        imageViewNoParkingDetected = RoadsignDetection.this.findViewById(R.id.imageview_no_parking_detected);
+        flashNotif = findViewById(R.id.flash_notif);
+        imageViewLastDetected = findViewById(R.id.imageview_last_detected);
+        textViewInferenceTime = findViewById(R.id.textViewInferenceTime);
+        imageViewStopDetected = findViewById(R.id.imageview_stop_detected);
+        imageViewWarningOnSpotDetected = findViewById(R.id.imageview_warning_on_spot_detected);
+        imageViewNoParkingDetected = findViewById(R.id.imageview_no_parking_detected);
+        recyclerViewDetectionFeed = findViewById(R.id.recycler_detection_feed);
+        //setting recycler view things
+        detectionFeedAdapter = new DetectionFeedAdapter();
+        RecyclerView.LayoutManager mLayoutManager = new LinearLayoutManager(getApplicationContext());
+        recyclerViewDetectionFeed.setLayoutManager(mLayoutManager);
+        recyclerViewDetectionFeed.setItemAnimator(new DefaultItemAnimator());
+        recyclerViewDetectionFeed.setAdapter(detectionFeedAdapter);
         //Flash animation
         Animation fadeIn = new AlphaAnimation(0, 1);
         fadeIn.setInterpolator(new DecelerateInterpolator());
@@ -405,6 +415,9 @@ public class RoadsignDetection extends AppCompatActivity implements ImageReader.
         if (detectionsToDisplay.lastDetection != null) {
             imageViewLastDetected.setImageBitmap(detectionsToDisplay.lastDetection);
             imageViewLastDetected.postInvalidate();
+        }
+        for(Bitmap detection:detectionsToDisplay.detectionFeed){
+            detectionFeedAdapter.addDetection(detection);
         }
         //update detection feed
         flashNotifUtil.updateStop(detectionsToDisplay.isDetectedStop,imageViewStopDetected);
