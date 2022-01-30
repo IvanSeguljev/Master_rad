@@ -50,7 +50,6 @@ public class EnchancedVision extends CameraActivity implements ImageReader.OnIma
     private final String labelsFilename = "model.tflite";
     private final boolean isQuantized = true;
 
-    private BorderedText borderedText;
     OverlayView trackingOverlay;
     private Detector apiModel;
 
@@ -96,12 +95,6 @@ public class EnchancedVision extends CameraActivity implements ImageReader.OnIma
 
     @Override
     public void onPreviewSizeChosen(final Size size, final int rotation) {
-        final float textSizePx =
-                TypedValue.applyDimension(
-                        TypedValue.COMPLEX_UNIT_DIP, 10, getResources().getDisplayMetrics());
-        borderedText = new BorderedText(textSizePx);
-        borderedText.setTypeface(Typeface.MONOSPACE);
-
 
         //initializing object detector
         initDetector();

@@ -131,14 +131,7 @@ public class RoadsignDetection extends CameraActivity {
 
     @Override
     public void onPreviewSizeChosen(final Size size, final int rotation) {
-        final float textSizePx =
-                TypedValue.applyDimension(
-                        TypedValue.COMPLEX_UNIT_DIP, 10, getResources().getDisplayMetrics());
-        borderedText = new BorderedText(textSizePx);
-        borderedText.setTypeface(Typeface.MONOSPACE);
 
-
-        //initializing object detector
         initDetector();
 
         previewWidth = size.getWidth();
