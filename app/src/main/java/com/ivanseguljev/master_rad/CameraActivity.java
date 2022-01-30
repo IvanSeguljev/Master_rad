@@ -62,6 +62,7 @@ public abstract class CameraActivity extends AppCompatActivity implements ImageR
     protected static final Size DESIRED_PREVIEW_SIZE = new Size(1280, 960);
     private Handler handler;
     private HandlerThread handlerThread;
+    protected int cropSize;
 
     @Override
     protected void onCreate(final Bundle savedInstanceState) {

@@ -143,6 +143,7 @@ public class RoadsignDetection extends CameraActivity {
 
         previewWidth = size.getWidth();
         previewHeight = size.getHeight();
+        cropSize = (previewHeight/4)*3;
         sensorOrientation = rotation - getScreenOrientation();
 
 
@@ -152,7 +153,7 @@ public class RoadsignDetection extends CameraActivity {
 
         frameToCropTransform =
                 ImageUtils.getTransformationMatrix(
-                        previewWidth, previewHeight,
+                        cropSize, cropSize,
                         inputImageSize, inputImageSize,
                         sensorOrientation, false);
 
@@ -181,7 +182,7 @@ public class RoadsignDetection extends CameraActivity {
         readyForNextImage();
 
         final Canvas canvas = new Canvas(croppedBitmap);
-        canvas.drawBitmap(rgbFrameBitmap, frameToCropTransform, null);
+        canvas.drawBitmap(Bitmap.createBitmap(rgbFrameBitmap,0,0,cropSize,cropSize), frameToCropTransform, null);
 
         runInBackground(
                 new Runnable() {
