@@ -20,7 +20,7 @@ import java.util.LinkedList;
 import java.util.List;
 
 //class for marking detections on canvas
-public class DetectionsMarker {
+public class EnchancedVisionDetectionHandler {
     private static int TEXT_SIZE_DIP = 18;
     private static final float MIN_BOX_SIZE = 16.0f;
 
@@ -34,7 +34,7 @@ public class DetectionsMarker {
     private final BorderedText borderedText;
     private final Logger logger = new Logger();
 
-    public DetectionsMarker(Context context,int previewWidth, int previewHeight, int sensorOrientation){
+    public EnchancedVisionDetectionHandler(Context context, int previewWidth, int previewHeight, int sensorOrientation){
         this.context = context;
         this.frameWidth =previewWidth;
         this.frameHeight =previewHeight;
@@ -81,8 +81,6 @@ public class DetectionsMarker {
                     !TextUtils.isEmpty(recognition.getDisplayText(context))
                             ? String.format("%s %.2f", recognition.getDisplayText(context), (100 * recognition.detectionConfidence))
                             : String.format("%.2f", (100 * recognition.detectionConfidence));
-            //            borderedText.drawText(canvas, trackedPos.left + cornerSize, trackedPos.top,
-            // labelString);
             borderedText.drawText(
                     canvas, trackedPos.left + cornerSize, trackedPos.top, labelString + "%", boxPaint);
         }

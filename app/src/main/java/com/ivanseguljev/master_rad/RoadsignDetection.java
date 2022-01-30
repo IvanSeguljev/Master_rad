@@ -1,9 +1,9 @@
 package com.ivanseguljev.master_rad;
 
 import androidx.appcompat.app.AppCompatActivity;
-
-import org.tensorflow.lite.examples.detection.tflite.Detector;
-import org.tensorflow.lite.examples.detection.tflite.TFLiteObjectDetectionAPIModel;
+import androidx.recyclerview.widget.DefaultItemAnimator;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
 import android.Manifest;
 import android.app.Fragment;
@@ -31,23 +31,36 @@ import android.os.Trace;
 import android.util.Size;
 import android.util.TypedValue;
 import android.view.Surface;
+import android.view.View;
 import android.view.WindowManager;
+import android.view.animation.AccelerateInterpolator;
+import android.view.animation.AlphaAnimation;
+import android.view.animation.Animation;
+import android.view.animation.AnimationSet;
+import android.view.animation.DecelerateInterpolator;
+import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import com.ivanseguljev.master_rad.camera.CameraConnectionFragment;
-import com.ivanseguljev.master_rad.customview.OverlayView;
-import com.ivanseguljev.master_rad.detection_handling.EnchancedVisionDetectionHandler;
+import com.ivanseguljev.master_rad.detection_handling.DetectionsToDisplay;
+import com.ivanseguljev.master_rad.detection_handling.RoadsignDetectionHandler;
 import com.ivanseguljev.master_rad.env.BorderedText;
 import com.ivanseguljev.master_rad.env.ImageUtils;
 import com.ivanseguljev.master_rad.env.LayoutController;
 import com.ivanseguljev.master_rad.env.Logger;
+import com.ivanseguljev.master_rad.util.DetectionFeedAdapter;
+import com.ivanseguljev.master_rad.util.FlashNotifUtil;
+
+import org.tensorflow.lite.examples.detection.tflite.Detector;
+import org.tensorflow.lite.examples.detection.tflite.TFLiteObjectDetectionAPIModel;
 
 import java.nio.ByteBuffer;
 import java.util.ArrayList;
 import java.util.List;
 
-public class EnchancedVision extends AppCompatActivity implements ImageReader.OnImageAvailableListener {
+public class RoadsignDetection extends AppCompatActivity implements ImageReader.OnImageAvailableListener {
+    LayoutController layoutController;
     private static final Logger LOGGER = new Logger();
     private static final String PERMISSION_CAMERA = Manifest.permission.CAMERA;
     private static final int PERMISSIONS_REQUEST = 1;
@@ -58,8 +71,10 @@ public class EnchancedVision extends AppCompatActivity implements ImageReader.On
 
     private TextView textViewInferenceTime;
     private TextView textViewPreviewSize;
-
-    LayoutController layoutController;
+    private View flashNotif;
+    private ImageView imageViewStopDetected;
+    private ImageView imageViewWarningOnSpotDetected;
+    private ImageView imageViewNoParkingDetected;
 
     private final int inputImageSize = 320;
     private final float MINIMUM_CONFIDENCE_OD = 0.5f;
@@ -68,10 +83,9 @@ public class EnchancedVision extends AppCompatActivity implements ImageReader.On
     private final boolean isQuantized = true;
 
     private BorderedText borderedText;
-    OverlayView trackingOverlay;
     private Detector apiModel;
 
-    private EnchancedVisionDetectionHandler enchancedVisionDetectionHandler;
+    private RoadsignDetectionHandler roadsignDetectionHandler;
     private Bitmap rgbFrameBitmap;
     private Bitmap croppedBitmap;
     private Bitmap cropCopyBitmap = null;
@@ -88,24 +102,50 @@ public class EnchancedVision extends AppCompatActivity implements ImageReader.On
     private boolean computingDetection = false;
     private long lastProcessingTimeMs;
 
-
     private Handler handler;
     private HandlerThread handlerThread;
+    private ImageView imageViewLastDetected;
+    private FlashNotifUtil flashNotifUtil;
+    private RecyclerView recyclerViewDetectionFeed;
+    private DetectionFeedAdapter detectionFeedAdapter;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_enchanced_vision);
-        getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
+        setContentView(R.layout.activity_roadsign_detection);
         layoutController = new LayoutController().init(this);
+        getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
+        //Getting UI components
+        flashNotif = findViewById(R.id.flash_notif);
+        imageViewLastDetected = findViewById(R.id.imageview_last_detected);
+        textViewInferenceTime = findViewById(R.id.textViewInferenceTime);
+        imageViewStopDetected = findViewById(R.id.imageview_stop_detected);
+        imageViewWarningOnSpotDetected = findViewById(R.id.imageview_warning_on_spot_detected);
+        imageViewNoParkingDetected = findViewById(R.id.imageview_no_parking_detected);
+        recyclerViewDetectionFeed = findViewById(R.id.recycler_detection_feed);
+        //setting recycler view things
+        detectionFeedAdapter = new DetectionFeedAdapter();
+        RecyclerView.LayoutManager mLayoutManager = new LinearLayoutManager(getApplicationContext());
+        recyclerViewDetectionFeed.setLayoutManager(mLayoutManager);
+        recyclerViewDetectionFeed.setItemAnimator(new DefaultItemAnimator());
+        recyclerViewDetectionFeed.setAdapter(detectionFeedAdapter);
+        //Flash animation
+        Animation fadeIn = new AlphaAnimation(0, 1);
+        fadeIn.setInterpolator(new DecelerateInterpolator());
+        fadeIn.setDuration(200);
+        Animation fadeOut = new AlphaAnimation(1, 0);
+        fadeOut.setInterpolator(new AccelerateInterpolator());
+        fadeOut.setStartOffset(200);
+        fadeOut.setDuration(1000);
+        AnimationSet flashAnim = new AnimationSet(false);
+        flashAnim.addAnimation(fadeIn);
+        flashAnim.addAnimation(fadeOut);
 
+        flashNotifUtil = new FlashNotifUtil(this,flashNotif,flashAnim);
         if (hasCameraPermission()) {
             setFragment();
         } else {
             requestPermission();
         }
-
-        textViewInferenceTime = findViewById(R.id.textViewInferenceTime);
-        textViewPreviewSize = findViewById(R.id.textViewPreviewSize);
     }
 
     private boolean hasCameraPermission() {
@@ -120,21 +160,20 @@ public class EnchancedVision extends AppCompatActivity implements ImageReader.On
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
             if (shouldShowRequestPermissionRationale(PERMISSION_CAMERA)) {
                 Toast.makeText(
-                        EnchancedVision.this,
+                        RoadsignDetection.this,
                         "Neophodan je pristup kameri",
                         Toast.LENGTH_LONG)
                         .show();
             }
-            requestPermissions(new String[] {PERMISSION_CAMERA}, PERMISSIONS_REQUEST);
+            requestPermissions(new String[]{PERMISSION_CAMERA}, PERMISSIONS_REQUEST);
         }
     }
 
-    private void initDetector()
-    {
+    private void initDetector() {
         try {
             apiModel = TFLiteObjectDetectionAPIModel.create(this, modelFilename, labelsFilename, inputImageSize, isQuantized);
             apiModel.setNumThreads(4);
-        }catch (Exception e){
+        } catch (Exception e) {
             System.out.println(e.getMessage());
             System.out.println("Greska u pozivanju detektora");
         }
@@ -173,22 +212,22 @@ public class EnchancedVision extends AppCompatActivity implements ImageReader.On
 
         Fragment fragment;
 
-            CameraConnectionFragment camera2Fragment =
-                    CameraConnectionFragment.newInstance(
-                            new CameraConnectionFragment.ConnectionCallback() {
-                                @Override
-                                public void onPreviewSizeChosen(final Size size, final int rotation) {
-                                    previewHeight = size.getHeight();
-                                    previewWidth = size.getWidth();
-                                    EnchancedVision.this.onPreviewSizeChosen(size, rotation);
-                                }
-                            },
-                            this,
-                            R.layout.fragment_tracking,
-                            DESIRED_PREVIEW_SIZE);
+        CameraConnectionFragment camera2Fragment =
+                CameraConnectionFragment.newInstance(
+                        new CameraConnectionFragment.ConnectionCallback() {
+                            @Override
+                            public void onPreviewSizeChosen(final Size size, final int rotation) {
+                                previewHeight = size.getHeight();
+                                previewWidth = size.getWidth();
+                                RoadsignDetection.this.onPreviewSizeChosen(size, rotation);
+                            }
+                        },
+                        this,
+                        R.layout.fragment_tracking,
+                        DESIRED_PREVIEW_SIZE);
 
-            camera2Fragment.setCamera(cameraId);
-            fragment = camera2Fragment;
+        camera2Fragment.setCamera(cameraId);
+        fragment = camera2Fragment;
         getFragmentManager().beginTransaction().replace(R.id.container, fragment).commit();
     }
 
@@ -207,9 +246,6 @@ public class EnchancedVision extends AppCompatActivity implements ImageReader.On
         previewHeight = size.getHeight();
         sensorOrientation = rotation - getScreenOrientation();
 
-        //initializing detection marker
-//        tracker = new MultiBoxTracker(this);
-        enchancedVisionDetectionHandler = new EnchancedVisionDetectionHandler(this,previewWidth,previewHeight,sensorOrientation);
 
         LOGGER.i("Initializing at size %dx%d", previewWidth, previewHeight);
         rgbFrameBitmap = Bitmap.createBitmap(previewWidth, previewHeight, Bitmap.Config.ARGB_8888);
@@ -224,14 +260,7 @@ public class EnchancedVision extends AppCompatActivity implements ImageReader.On
         cropToFrameTransform = new Matrix();
         frameToCropTransform.invert(cropToFrameTransform);
 
-        trackingOverlay = (OverlayView) findViewById(R.id.tracking_overlay);
-        trackingOverlay.addCallback(
-                new OverlayView.DrawCallback() {
-                    @Override
-                    public void drawCallback(final Canvas canvas) {
-                        enchancedVisionDetectionHandler.draw(canvas);
-                    }
-                });
+        roadsignDetectionHandler = new RoadsignDetectionHandler(this,previewWidth,previewHeight);
 
 
     }
@@ -298,6 +327,7 @@ public class EnchancedVision extends AppCompatActivity implements ImageReader.On
                     new Runnable() {
                         @Override
                         public void run() {
+
                             image.close();
                             isProcessingFrame = false;
                         }
@@ -311,10 +341,10 @@ public class EnchancedVision extends AppCompatActivity implements ImageReader.On
         }
         Trace.endSection();
     }
+
     protected void processImage() {
         ++timestamp;
-        final long currTimestamp = timestamp;
-        trackingOverlay.postInvalidate();
+        final long imagenum = timestamp;
 
         // No mutex needed as this method is not reentrant.
         if (computingDetection) {
@@ -322,10 +352,10 @@ public class EnchancedVision extends AppCompatActivity implements ImageReader.On
             return;
         }
         computingDetection = true;
-        LOGGER.i("Preparing image " + currTimestamp + " for detection in bg thread.");
+        LOGGER.i("Preparing image " + imagenum + " for detection in bg thread.");
 
         rgbFrameBitmap.setPixels(getRgbBytes(), 0, previewWidth, 0, 0, previewWidth, previewHeight);
-
+        roadsignDetectionHandler.setFrame(rgbFrameBitmap);
         readyForNextImage();
 
         final Canvas canvas = new Canvas(croppedBitmap);
@@ -335,7 +365,7 @@ public class EnchancedVision extends AppCompatActivity implements ImageReader.On
                 new Runnable() {
                     @Override
                     public void run() {
-                        LOGGER.i("Running detection on image " + currTimestamp);
+                        LOGGER.i("Running detection on image " + imagenum);
                         final long startTime = SystemClock.uptimeMillis();
                         final List<Detector.Recognition> results = apiModel.recognizeImage(croppedBitmap);
                         lastProcessingTimeMs = SystemClock.uptimeMillis() - startTime;
@@ -362,9 +392,8 @@ public class EnchancedVision extends AppCompatActivity implements ImageReader.On
                                 mappedRecognitions.add(result);
                             }
                         }
-
-                        enchancedVisionDetectionHandler.trackResults(mappedRecognitions, currTimestamp);
-                        trackingOverlay.postInvalidate();
+                        roadsignDetectionHandler.trackResults(mappedRecognitions, imagenum);
+//                        detectionsMarker.trackResults(mappedRecognitions, imagenum);
 
                         computingDetection = false;
 
@@ -372,27 +401,47 @@ public class EnchancedVision extends AppCompatActivity implements ImageReader.On
                                 new Runnable() {
                                     @Override
                                     public void run() {
+                                        show_detections_on_UI(roadsignDetectionHandler.getDetectionsToDisplay());
+                                        roadsignDetectionHandler.clearResultsMap();
                                         textViewInferenceTime.setText(lastProcessingTimeMs + " milisekundi");
-                                        textViewPreviewSize.setText(previewWidth + "x" + previewHeight);
+//                                        textViewPreviewSize.setText(previewWidth + "x" + previewHeight);
                                     }
                                 });
                     }
                 });
+    }
+    private void show_detections_on_UI(DetectionsToDisplay detectionsToDisplay){
+        //show last detected item
+        if (detectionsToDisplay.lastDetection != null) {
+            imageViewLastDetected.setImageBitmap(detectionsToDisplay.lastDetection);
+            imageViewLastDetected.postInvalidate();
+        }
+        for(Bitmap detection:detectionsToDisplay.detectionFeed){
+            detectionFeedAdapter.addDetection(detection);
+        }
+        //update detection feed
+        flashNotifUtil.updateStop(detectionsToDisplay.isDetectedStop,imageViewStopDetected);
+        flashNotifUtil.updateWarningOnSpot(detectionsToDisplay.isDetectedWarningOnSpot,imageViewWarningOnSpotDetected);
+        flashNotifUtil.updateNoParking(detectionsToDisplay.isDetectedNoParking,imageViewNoParkingDetected);
+
     }
     protected void readyForNextImage() {
         if (postInferenceCallback != null) {
             postInferenceCallback.run();
         }
     }
+
     protected int[] getRgbBytes() {
         imageConverter.run();
         return rgbBytes;
     }
+
     protected synchronized void runInBackground(final Runnable r) {
         if (handler != null) {
             handler.post(r);
         }
     }
+
     @Override
     public synchronized void onResume() {
         LOGGER.d("onResume " + this);

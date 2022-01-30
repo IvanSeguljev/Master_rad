@@ -15,6 +15,7 @@ import android.widget.Toast;
 import com.ivanseguljev.master_rad.EnchancedVision;
 import com.ivanseguljev.master_rad.MainActivity;
 import com.ivanseguljev.master_rad.R;
+import com.ivanseguljev.master_rad.RoadsignDetection;
 
 public class LayoutController {
     ImageView imageViewHamburger;
@@ -57,8 +58,12 @@ public class LayoutController {
             @Override
             public void onClick(View view) {
                 drawerLayout.closeDrawer(Gravity.LEFT);
-                Toast.makeText(context.getApplicationContext(), "to be implemented", Toast.LENGTH_SHORT).show();
-                //TODO implement this
+                if (!RoadsignDetection.class.equals(context.getClass())) {
+                    Intent roadsignDetectionIntent = new Intent(context, RoadsignDetection.class);
+                    context.startActivity(roadsignDetectionIntent);
+                } else {
+                    Toast.makeText(context.getApplicationContext(), "Trenutno na toj aktivnosti", Toast.LENGTH_SHORT).show();
+                }
             }
         });
         //Enchanced vision
@@ -80,8 +85,8 @@ public class LayoutController {
             public void onClick(View view) {
                 drawerLayout.closeDrawer(Gravity.LEFT);
                 if (!MainActivity.class.equals(context.getClass())) {
-                    Intent enchancedVisionIntent = new Intent(context, MainActivity.class);
-                    context.startActivity(enchancedVisionIntent);
+                    Intent homeIntent = new Intent(context, MainActivity.class);
+                    context.startActivity(homeIntent);
                 } else {
                     Toast.makeText(context.getApplicationContext(), "Trenutno na toj aktivnosti", Toast.LENGTH_SHORT).show();
                 }

@@ -10,6 +10,7 @@
     <string name="detection_no_stopping_or_parking">Zabranjeno parkiranje</string>
     <string name="detection_stop">Stop</string>
     <string name="detection_give_road">Pravo prvenstva</string>
+    <string name="detection_warning_on_spot">Prepreka ili pešački prelaz</string>
 
     <!-- navigation -->
     <string name="nav_home_page">Početna strana</string>
