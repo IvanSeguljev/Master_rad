@@ -193,21 +193,13 @@ public class RoadsignDetection extends CameraActivity {
                         final List<Detector.Recognition> results = apiModel.recognizeImage(croppedBitmap);
                         lastProcessingTimeMs = SystemClock.uptimeMillis() - startTime;
 
-                        cropCopyBitmap = Bitmap.createBitmap(croppedBitmap);
-                        final Canvas canvas = new Canvas(cropCopyBitmap);
-                        final Paint paint = new Paint();
-                        paint.setColor(Color.RED);
-                        paint.setStyle(Paint.Style.STROKE);
-                        paint.setStrokeWidth(2.0f);
-                        float minimumConfidence = MINIMUM_CONFIDENCE_OD;
 
                         final List<Detector.Recognition> mappedRecognitions =
                                 new ArrayList<Detector.Recognition>();
 
                         for (final Detector.Recognition result : results) {
                             final RectF location = result.getLocation();
-                            if (location != null && result.getConfidence() >= minimumConfidence) {
-                                canvas.drawRect(location, paint);
+                            if (location != null && result.getConfidence() >= MINIMUM_CONFIDENCE_OD) {
 
                                 cropToFrameTransform.mapRect(location);
 
@@ -216,7 +208,6 @@ public class RoadsignDetection extends CameraActivity {
                             }
                         }
                         roadsignDetectionHandler.trackResults(mappedRecognitions, imagenum);
-//                        detectionsMarker.trackResults(mappedRecognitions, imagenum);
 
                         computingDetection = false;
 
