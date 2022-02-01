@@ -45,7 +45,7 @@
             android:layout_height="30dp"
             android:layout_marginStart="16dp"
             android:layout_marginTop="16dp"
-            app:srcCompat="?android:attr/fingerprintAuthDrawable" />
+            app:srcCompat="@drawable/icons8_home_100" />
 
         <TextView
             android:id="@+id/textView11"
@@ -73,7 +73,7 @@
             android:layout_height="30dp"
             android:layout_marginStart="16dp"
             android:layout_marginTop="16dp"
-            app:srcCompat="@android:drawable/stat_sys_warning" />
+            app:srcCompat="@drawable/icons8_error_100" />
 
         <TextView
             android:id="@+id/textView5"
@@ -101,7 +101,7 @@
             android:layout_height="30dp"
             android:layout_marginStart="16dp"
             android:layout_marginTop="16dp"
-            app:srcCompat="?android:attr/actionModeFindDrawable" />
+            app:srcCompat="@drawable/icons8_about_100" />
 
         <TextView
             android:id="@+id/textView7"
@@ -128,7 +128,7 @@
             android:layout_height="30dp"
             android:layout_marginStart="16dp"
             android:layout_marginTop="16dp"
-            app:srcCompat="@android:drawable/ic_menu_camera" />
+            app:srcCompat="@drawable/icons8_camera_100" />
 
         <TextView
             android:id="@+id/textView9"
