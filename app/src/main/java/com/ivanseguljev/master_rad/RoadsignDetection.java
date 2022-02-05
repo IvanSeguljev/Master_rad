@@ -25,6 +25,7 @@ import androidx.recyclerview.widget.DefaultItemAnimator;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.ivanseguljev.master_rad.customview.OverlayView;
 import com.ivanseguljev.master_rad.detection_handling.DetectionsToDisplay;
 import com.ivanseguljev.master_rad.detection_handling.RoadsignDetectionHandler;
 import com.ivanseguljev.master_rad.env.BorderedText;
@@ -139,7 +140,19 @@ public class RoadsignDetection extends CameraActivity {
         cropSize = (previewHeight/4)*3;
         sensorOrientation = rotation - getScreenOrientation();
 
-
+        overlayDetectionZone.addCallback(new OverlayView.DrawCallback() {
+            @Override
+            public void drawCallback(Canvas canvas) {
+                Paint paint = new Paint();
+                paint.setColor(Color.YELLOW);
+                paint.setStrokeWidth(3);
+                int squareSize = (canvas.getWidth()/4)*3;
+                canvas.drawLine(canvas.getWidth()-squareSize,0,canvas.getWidth()-squareSize,squareSize,paint);
+                canvas.drawLine(canvas.getWidth()-squareSize,squareSize,canvas.getWidth(),squareSize,paint);
+            }
+        });
+        Canvas detectionZone=new Canvas(Bitmap.createBitmap(previewHeight,previewWidth, Bitmap.Config.ARGB_8888));
+        overlayDetectionZone.draw(detectionZone);
         LOGGER.i("Initializing at size %dx%d", previewWidth, previewHeight);
         rgbFrameBitmap = Bitmap.createBitmap(previewWidth, previewHeight, Bitmap.Config.ARGB_8888);
         croppedBitmap = Bitmap.createBitmap(inputImageSize, inputImageSize, Bitmap.Config.ARGB_8888);

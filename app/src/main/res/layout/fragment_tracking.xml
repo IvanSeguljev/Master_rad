@@ -14,4 +14,9 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent" />
 
+    <com.ivanseguljev.master_rad.customview.OverlayView
+        android:id="@+id/overlay_detection_zone"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent" />
+
 </FrameLayout>

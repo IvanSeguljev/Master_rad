@@ -41,6 +41,7 @@ import android.widget.Toast;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.ivanseguljev.master_rad.camera.CameraConnectionFragment;
+import com.ivanseguljev.master_rad.customview.OverlayView;
 import com.ivanseguljev.master_rad.detection_handling.RoadsignDetectionHandler;
 import com.ivanseguljev.master_rad.env.BorderedText;
 import com.ivanseguljev.master_rad.env.ImageUtils;
@@ -64,6 +65,8 @@ public abstract class CameraActivity extends AppCompatActivity implements ImageR
     private HandlerThread handlerThread;
     protected int cropSize;
 
+    protected OverlayView overlayDetectionZone;
+
     @Override
     protected void onCreate(final Bundle savedInstanceState) {
         super.onCreate(null);
@@ -86,6 +89,7 @@ public abstract class CameraActivity extends AppCompatActivity implements ImageR
                             public void onPreviewSizeChosen(final Size size, final int rotation) {
                                 previewHeight = size.getHeight();
                                 previewWidth = size.getWidth();
+                                overlayDetectionZone = findViewById(R.id.overlay_detection_zone);
                                 CameraActivity.this.onPreviewSizeChosen(size, rotation);
                             }
                         },
@@ -96,6 +100,7 @@ public abstract class CameraActivity extends AppCompatActivity implements ImageR
         camera2Fragment.setCamera(cameraId);
         fragment = camera2Fragment;
         getFragmentManager().beginTransaction().replace(R.id.container, fragment).commit();
+
     }
 
     @Override

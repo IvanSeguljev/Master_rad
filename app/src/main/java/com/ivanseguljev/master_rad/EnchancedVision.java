@@ -113,7 +113,7 @@ public class EnchancedVision extends CameraActivity implements ImageReader.OnIma
 
         frameToCropTransform =
                 ImageUtils.getTransformationMatrix(
-                        cropSize, cropSize,
+                        previewWidth, previewHeight,
                         inputImageSize, inputImageSize,
                         sensorOrientation, false);
 
@@ -151,7 +151,7 @@ public class EnchancedVision extends CameraActivity implements ImageReader.OnIma
         readyForNextImage();
 
         final Canvas canvas = new Canvas(croppedBitmap);
-        canvas.drawBitmap(Bitmap.createBitmap(rgbFrameBitmap,0,0,cropSize,cropSize), frameToCropTransform, null);
+        canvas.drawBitmap(rgbFrameBitmap, frameToCropTransform, null);
 
         runInBackground(
                 new Runnable() {
