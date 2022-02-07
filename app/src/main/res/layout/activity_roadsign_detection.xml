@@ -5,14 +5,14 @@
     android:id="@+id/drawer_layout"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".RoadsignDetection"
+    tools:context=".RoadsignDetectionActivity"
     tools:ignore="HardcodedText">
 
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        tools:context=".RoadsignDetection">
+        tools:context=".RoadsignDetectionActivity">
 
         <androidx.appcompat.widget.Toolbar
             android:id="@+id/toolbar"
@@ -97,7 +97,7 @@
             app:layout_constraintHorizontal_bias="0.508"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/imageview_stop_detected"
-            tools:context="com.ivanseguljev.master_rad.RoadsignDetection"
+            tools:context="com.ivanseguljev.master_rad.RoadsignDetectionActivity"
             tools:visibility="visible">
 
         </FrameLayout>

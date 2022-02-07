@@ -15,13 +15,13 @@
             android:name=".AboutActivity"
             android:exported="true" />
         <activity
-            android:name=".RoadsignDetection"
+            android:name=".RoadsignDetectionActivity"
             android:exported="false" />
         <activity
             android:name=".LayoutActivity"
             android:exported="false" />
         <activity
-            android:name=".EnchancedVision"
+            android:name=".EnchancedVisionActivity"
             android:exported="false" />
         <activity
             android:name=".MainActivity"

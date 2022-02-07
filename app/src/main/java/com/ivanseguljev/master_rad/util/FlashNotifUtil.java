@@ -67,7 +67,7 @@ public class FlashNotifUtil {
             if(isWarningOnSpotShowing){
                 if(warningOnSpotTimeout<System.currentTimeMillis()) {
                     imageViewWarningOnSpot.setBackgroundColor(Color.TRANSPARENT);
-                    imageViewWarningOnSpot.setImageResource(R.drawable.pesacki_darken);
+                    imageViewWarningOnSpot.setImageResource(R.drawable.no_parking_darken);
                     imageViewWarningOnSpot.setAlpha(0.2f);
                     isWarningOnSpotShowing = false;
                 }
