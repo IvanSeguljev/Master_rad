@@ -69,7 +69,7 @@ public class EnchancedVisionDetectionHandler {
                         sensorOrientation,
                         false);
         for (final DetectionInstance recognition : detectedInstances) {
-            final RectF trackedPos = new RectF(recognition.location);
+            final RectF trackedPos = new RectF(recognition.getLocation());
 
             frameToCanvasMatrix.mapRect(trackedPos);
             boxPaint.setColor(recognition.getColor());
@@ -79,8 +79,8 @@ public class EnchancedVisionDetectionHandler {
 
             final String labelString =
                     !TextUtils.isEmpty(recognition.getDisplayText(context))
-                            ? String.format("%s %.2f", recognition.getDisplayText(context), (100 * recognition.detectionConfidence))
-                            : String.format("%.2f", (100 * recognition.detectionConfidence));
+                            ? String.format("%s %.2f", recognition.getDisplayText(context), (100 * recognition.getConfidence()))
+                            : String.format("%.2f", (100 * recognition.getConfidence()));
             borderedText.drawText(
                     canvas, trackedPos.left + cornerSize, trackedPos.top, labelString + "%", boxPaint);
         }
@@ -121,6 +121,7 @@ public class EnchancedVisionDetectionHandler {
 
         for (final Pair<Float, Detector.Recognition> potential : rectsToTrack) {
             final DetectionInstance instance = new DetectionInstance(
+                    potential.second.getId(),
                     new RectF(potential.second.getLocation()),
                     potential.first,
                     potential.second.getTitle()

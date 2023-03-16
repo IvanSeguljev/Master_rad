@@ -12,13 +12,16 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.Master_rad">
         <activity
-            android:name=".RoadsignDetection"
+            android:name=".AboutActivity"
+            android:exported="true" />
+        <activity
+            android:name=".RoadsignDetectionActivity"
             android:exported="false" />
         <activity
             android:name=".LayoutActivity"
             android:exported="false" />
         <activity
-            android:name=".EnchancedVision"
+            android:name=".EnchancedVisionActivity"
             android:exported="false" />
         <activity
             android:name=".MainActivity"

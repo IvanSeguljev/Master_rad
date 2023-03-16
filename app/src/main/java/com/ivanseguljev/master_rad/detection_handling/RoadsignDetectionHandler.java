@@ -68,14 +68,14 @@ public class RoadsignDetectionHandler {
             if (nextToBeDisplayed == null)   {
                 putRecognitionInMap(recognition);
             } else {
-                if (nextToBeDisplayed.getDetectionConfidence() <= recognition.getConfidence())
+                if (nextToBeDisplayed.getConfidence() <= recognition.getConfidence())
                     putRecognitionInMap(recognition);
             }
         }
     }
     //gets detection instance from recognition.
     private DetectionInstance getDetInsFromRecog(Detector.Recognition recognition) {
-        DetectionInstance res = new DetectionInstance(recognition.getLocation(), recognition.getConfidence(), recognition.getTitle());
+        DetectionInstance res = new DetectionInstance(recognition.getId(),recognition.getLocation(), recognition.getConfidence(), recognition.getTitle());
         return res;
     }
 
@@ -101,7 +101,7 @@ public class RoadsignDetectionHandler {
             if (lastDetection == null) {
                 lastDetection = s;
             } else {
-                if (lastDetection.getDetectionConfidence() < s.getDetectionConfidence()) {
+                if (lastDetection.getConfidence() < s.getConfidence()) {
                     lastDetection = s;
                 }
             }

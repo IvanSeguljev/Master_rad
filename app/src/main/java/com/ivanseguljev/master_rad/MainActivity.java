@@ -6,7 +6,6 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.ImageButton;
-import android.widget.Toast;
 
 import com.ivanseguljev.master_rad.env.LayoutController;
 
@@ -30,7 +29,7 @@ public class MainActivity extends AppCompatActivity {
         buttonSignDetection.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Intent roadsignDetectionIntent = new Intent(MainActivity.this, RoadsignDetection.class);
+                Intent roadsignDetectionIntent = new Intent(MainActivity.this, RoadsignDetectionActivity.class);
                 MainActivity.this.startActivity(roadsignDetectionIntent);
             }
         });
@@ -39,7 +38,7 @@ public class MainActivity extends AppCompatActivity {
         buttonEnchancedVision.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Intent enchancedVisionIntent = new Intent(MainActivity.this,EnchancedVision.class);
+                Intent enchancedVisionIntent = new Intent(MainActivity.this, EnchancedVisionActivity.class);
                 MainActivity.this.startActivity(enchancedVisionIntent);
             }
         });

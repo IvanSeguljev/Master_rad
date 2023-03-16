@@ -21,4 +21,13 @@
     <!-- detection params -->
     <string name="detpar_preview_size">Veličina prikaza:</string>
     <string name="detpar_inference_time">Vreme detekcije:</string>
+
+    <!-- about -->
+    <string name="about_roadsign_detection">Detekcija saobraćajnih znakova je mod rada u kome aplikacija detektuje znakove na putu i detekcije prikazuje
+    tako da kasnije možete pregledati detektovane znakove. Takođe, aplikacija prikazuje upozorenje ukoliko detektuje neki od znakova Stop, pešački prelaz
+    ili ležeći policajac, ili znak za zabranjeno parkiranje i zaustavljane.</string>
+    <string name="about_app">Aplikacija DSZ(detekcija saobraćajnih znakova) korišćenjem mašinskog učenja omogućuje korisnicima detekciju soabraćajnih znakova
+    na putu u realnom vremenu, pomoću kamere na mobilnom uređaju.</string>
+    <string name="about_enchanced_vision">Kompjuterski vid je mod rada aplikacije u kome se saobraćajni znakovi na putu detektuju i u realnom vremenom uokviruju,
+    kako bi korisniku dočarali mogućnosti detektora pri detekciji saobraćajnih znakova.</string>
 </resources>
